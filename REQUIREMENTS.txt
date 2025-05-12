@@ -1,0 +1,7 @@
+uvicorn
+fastapi[standard]
+bcrypt
+nicegui
+sqlalchemy
+pydantic-settings
+dbml-to-sqlalchemy>=0.9.2

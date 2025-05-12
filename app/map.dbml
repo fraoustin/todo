@@ -1,0 +1,23 @@
+Table user {
+    id integer [pk, increment, note:'key of user']
+    username string [unique, not null, note:'only name']
+    password string [not null]
+    email string [unique, not null]
+    token string [unique, not null]
+    disabled boolean [not null, default: False]
+    isadmin boolean [not null, default: False]
+    onlyapi boolean [not null, default: False]
+    
+    indexes {
+        (username)
+    }
+
+    Note: 'Stores user data'
+}
+
+Table todo {
+    id integer [pk, increment]
+    text string [not null]
+    terminated boolean [not null, default: False]
+    who integer [ref: > user.id]
+}
