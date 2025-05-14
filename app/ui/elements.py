@@ -4,6 +4,7 @@ from pydantic import parse_obj_as
 import httpx
 from .schemas import Todo
 
+
 class TodoLine(Element):
     def __init__(self, todo: Todo):
         super().__init__('div')
@@ -13,16 +14,16 @@ class TodoLine(Element):
         with self:
             with ui.row().classes('items-center gap-4 w-full'):
                 self.checkbox = ui.checkbox(value=todo.terminated, on_change=self.on_change_terminated).props('dense')
-                self.input = ui.input(value=todo.text, on_change=self.on_change_text).props('dense borderless readonly' ).classes('flex-1').style('text-decoration: line-through;' if self.todo.terminated else 'text-decoration: none;')
+                self.input = ui.input(value=todo.text, on_change=self.on_change_text).props('dense borderless readonly').classes('flex-1').style('text-decoration: line-through;' if self.todo.terminated else 'text-decoration: none;')
                 ui.button(icon="o_delete", on_click=self.on_delete).props('dense flat round')
 
     async def on_change_terminated(self):
         self.todo.terminated = self.checkbox.value
         if self.todo.terminated:
-            self.input.props['readonly']=True
+            self.input.props['readonly'] = True
             self.input.style('text-decoration: line-through;')
         else:
-            self.input.props['readonly']=False
+            self.input.props['readonly'] = False
             self.input.style('text-decoration: none;')
         await self.todo.update()
 
@@ -34,6 +35,7 @@ class TodoLine(Element):
         await self.todo.delete()
         self.delete()
 
+
 class TodoList(Element):
     def __init__(self, api_base, headers):
         super().__init__('div')
@@ -43,7 +45,7 @@ class TodoList(Element):
 
     async def load_data(self):
         with self:
-            todos =  await Todo.all(self.api_base, self.headers)
+            todos = await Todo.all(self.api_base, self.headers)
             for todo in todos:
                 TodoLine(todo)
 

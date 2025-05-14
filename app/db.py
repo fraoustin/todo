@@ -7,6 +7,8 @@ from config import get_settings
 import bcrypt
 
 # Hash a password using bcrypt
+
+
 def hash_password(password):
     pwd_bytes = password.encode('utf-8')
     salt = bcrypt.gensalt()
@@ -14,13 +16,17 @@ def hash_password(password):
     return hashed_password
 
 # Check if the provided password matches the stored password (hashed)
+
+
 def verify_password(plain_password, hashed_password):
     password_byte_enc = plain_password.encode('utf-8')
-    return bcrypt.checkpw(password = password_byte_enc , hashed_password = hashed_password)
+    return bcrypt.checkpw(password=password_byte_enc, hashed_password=hashed_password)
+
 
 settings = get_settings()
 
 DATABASE_URL = os.environ.get('APP_DATABASE_URL', settings.database_url)
+
 
 def cleanDb():
     url = make_url(DATABASE_URL)
@@ -77,6 +83,7 @@ except Exception:
     Base = declarative_base()
 
 current_module = sys.modules[__name__]
+
 
 def add_dbml(path, module=current_module):
     parsed = PyDBML(Path(path))

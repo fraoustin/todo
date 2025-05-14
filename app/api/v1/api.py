@@ -10,9 +10,11 @@ from .schemas import TodoCreate, TodoUpdate, TodoOut
 
 router = APIRouter()
 
+
 @router.get("/version")
 async def version():
     return {"version": "1.0.0"}
+
 
 @router.post("/todo", response_model=TodoOut)
 async def create_todo(todo_in: TodoCreate, db: Session = Depends(get_db), user: User = Depends(get_current_user)):

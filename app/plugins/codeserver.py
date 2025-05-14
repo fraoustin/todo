@@ -3,7 +3,7 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from fastapi import Request
 
 
-def codeServerMiddleware(prefix= '127.0.0.1:8080'):
+def codeServerMiddleware(prefix='127.0.0.1:8080'):
     CODESERVER_PREFIX = prefix
 
     class RootPathMiddleware(BaseHTTPMiddleware):
@@ -12,5 +12,5 @@ def codeServerMiddleware(prefix= '127.0.0.1:8080'):
                 request.scope["root_path"] = CODESERVER_PREFIX
             response = await call_next(request)
             return response
-    
+
     return RootPathMiddleware

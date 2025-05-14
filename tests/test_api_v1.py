@@ -1,4 +1,5 @@
 # test_api_v1.py
+
 import unittest
 from fastapi.testclient import TestClient
 from fastapi import FastAPI
@@ -8,15 +9,15 @@ import os
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "app")))
 os.environ["ENV"] = "unittest"
 
-from main import app
 from db import cleanDb
+from main import app
 
 
 class TestAuth(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.client = TestClient(app)
-    
+
     @classmethod
     def tearDownClass(cls):
         cleanDb()

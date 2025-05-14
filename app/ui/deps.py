@@ -1,6 +1,7 @@
 import httpx
 from nicegui import ui
 
+
 class NotifyingHttpClient:
     def __init__(self, ):
         self.client = None
@@ -26,7 +27,7 @@ class NotifyingHttpClient:
 
     async def _request(self, method, url, **kwargs):
         response = await method(url, **kwargs)
-        if response.status_code != 200:
+        if response.status_code > 400:
             ui.notify(
                 f"Erreur {response.status_code} sur {url}",
                 type='negative'

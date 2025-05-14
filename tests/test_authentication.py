@@ -16,7 +16,7 @@ class TestAuth(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.client = TestClient(app)
-    
+
     @classmethod
     def tearDownClass(cls):
         cleanDb()
@@ -148,7 +148,6 @@ class TestAuth(unittest.TestCase):
         headers = {"Authorization": f"Bearer {token}"}
         response = self.client.get("/api/users", headers=headers)
         self.assertEqual(response.status_code, 200)
-        lenusers = len(response.json())
         response = self.client.post("/api/user", headers=headers, content='{"username": "test5", "email": "test5@example.com", "disabled": false,  "isadmin": false, "onlyapi": false, "password": "123456"}')
         self.assertEqual(response.status_code, 200)
         newid = response.json()["id"]

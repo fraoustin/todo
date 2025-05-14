@@ -12,6 +12,12 @@ sample of todo application with fastapi and nicegui
 
 ## quality
 
+correction quality
+
+> autopep8 --in-place --recursive app/*
+
+check quality
+
 > flake8
 
 ## tests

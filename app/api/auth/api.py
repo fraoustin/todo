@@ -22,11 +22,13 @@ async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db: 
         return {"access_token": user.token, "token_type": "bearer"}
     raise HTTPException(status_code=400, detail="User or password invalid")
 
+
 async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], db: Session = Depends(get_db)) -> User:
     user = db.query(User).filter(User.token == token).first()
     if not user or user.disabled:
         raise HTTPException(status_code=401, detail="Token invalid")
     return user
+
 
 async def get_current_admin_user(token: Annotated[str, Depends(oauth2_scheme)], db: Session = Depends(get_db)) -> User:
     user = db.query(User).filter(User.token == token).first()
@@ -34,9 +36,11 @@ async def get_current_admin_user(token: Annotated[str, Depends(oauth2_scheme)], 
         raise HTTPException(status_code=401, detail="Token invalid")
     return user
 
+
 @router.get("/me", response_model=UserOut)
 async def me(user: Annotated[dict, Depends(get_current_user)]):
     return user
+
 
 @router.put("/me", response_model=UserOut)
 async def update_current_user(user: Annotated[dict, Depends(get_current_user)], user_update: UserUpdateMe, db: Session = Depends(get_db)):
@@ -54,16 +58,18 @@ async def update_current_user(user: Annotated[dict, Depends(get_current_user)], 
     db.refresh(user)
     return user
 
+
 @router.get("/users", response_model=list[UserOut])
 async def list_users(user: Annotated[dict, Depends(get_current_admin_user)], db: Session = Depends(get_db)):
     return db.query(User).order_by(User.username).all()
+
 
 @router.post("/user", response_model=UserOut)
 async def create_user(user: Annotated[dict, Depends(get_current_admin_user)], user_n: UserCreate, db: Session = Depends(get_db)):
     existing = db.query(User).filter(User.username == user_n.username).first()
     if existing:
         raise HTTPException(status_code=400, detail="Username already in use")
-    
+
     new_user = User(
         username=user_n.username,
         email=user_n.email,
@@ -78,7 +84,6 @@ async def create_user(user: Annotated[dict, Depends(get_current_admin_user)], us
     return new_user
 
 
-
 @router.get("/user/{user_id}", response_model=UserOut)
 async def get_user(user: Annotated[dict, Depends(get_current_admin_user)], user_id: int, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.id == user_id).first()
@@ -86,12 +91,13 @@ async def get_user(user: Annotated[dict, Depends(get_current_admin_user)], user_
         raise HTTPException(status_code=404, detail="User not found")
     return user
 
+
 @router.put("/user/{user_id}", response_model=UserOut)
 async def update_user(user: Annotated[dict, Depends(get_current_admin_user)], user_id: int, user_update: UserUpdate, db: Session = Depends(get_db)):
     user_to_update = db.query(User).filter(User.id == user_id).first()
     if not user_to_update:
         raise HTTPException(status_code=404, detail="User not found")
-    
+
     for attr, value in user_update.model_dump(exclude_unset=True).items():
         if attr == 'password':
             setattr(user_to_update, attr, hash_password(attr))
@@ -111,7 +117,7 @@ async def delete_user(user: Annotated[dict, Depends(get_current_admin_user)], us
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
-    
+
     db.delete(user)
     db.commit()
     return {"message": f"User {user.username} deleted"}

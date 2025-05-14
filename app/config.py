@@ -2,6 +2,7 @@ import os
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from functools import lru_cache
 
+
 class Settings(BaseSettings):
 
     env: str = "prod"
@@ -19,6 +20,7 @@ class Settings(BaseSettings):
             if os.path.exists(custom_env):
                 self.model_config['env_file'] = custom_env
         super().__init__(**values)
+
 
 @lru_cache()
 def get_settings():

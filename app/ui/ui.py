@@ -18,8 +18,8 @@ def init(fastapi_app, mount_path='/', app_prefix="", secret='your-secret'):
     async def settings(request: Request):
         me = current_user.get()
         current_route = '/' + str(request.url).split('/')[-1].split('?')[0]
-        
-        with frame(me, current_route)  as (left_drawer, header, footer, content, dark_mode):
+
+        with frame(me, current_route) as (left_drawer, header, footer, content, dark_mode):
             with content:
                 with ui.element('div').classes('w-full').style('min-width: 80%;max-width: 768px;margin: auto;'):
                     ui.label('Utilisateurs:').classes('flex items-center')
@@ -31,8 +31,8 @@ def init(fastapi_app, mount_path='/', app_prefix="", secret='your-secret'):
     async def admin(request: Request):
         me = current_user.get()
         current_route = '/' + str(request.url).split('/')[-1].split('?')[0]
-        
-        with frame(me, current_route)  as (left_drawer, header, footer, content, dark_mode):
+
+        with frame(me, current_route) as (left_drawer, header, footer, content, dark_mode):
             with content:
                 with ui.column():
                     Gravatar(me.email, size='xl').style('margin: auto;')
@@ -45,6 +45,7 @@ def init(fastapi_app, mount_path='/', app_prefix="", secret='your-secret'):
                         ui.checkbox(value=me.isadmin).props('disable').props('color=black')
                         ui.label('Dark mode').classes('flex items-center')
                         ui.checkbox().props('color=black').bind_value(dark_mode)
+
     @ui.page('/')
     @require_auth()
     async def main(request: Request):
@@ -55,8 +56,8 @@ def init(fastapi_app, mount_path='/', app_prefix="", secret='your-secret'):
             if event.sender.value.strip():
                 await todolist.add_todo(event.sender.value)
                 event.sender.value = ''
-        
-        with frame(me, current_route)  as (left_drawer, header, footer, content, dark_mode):
+
+        with frame(me, current_route) as (left_drawer, header, footer, content, dark_mode):
             with content:
                 with ui.element('div').classes('w-full').style('min-width: 80%;max-width: 768px;margin: auto;'):
                     input = InputWithButton(icon='o_arrow_circle_down', placeholder='Nouvelle todo').classes('flex-grow w-full').on('keydown.enter', handle_add)
@@ -66,7 +67,7 @@ def init(fastapi_app, mount_path='/', app_prefix="", secret='your-secret'):
 
             with footer:
                 InputWithButton(icon='o_arrow_circle_up', placeholder='Nouvelle todo').on('keydown.enter', handle_add)
-            
+
         ui.add_body_html('''
         <script>
         function updateView() {

@@ -25,11 +25,12 @@ from nicegui.element import Element
 
 from ..deps import NotifyingHttpClient
 
+
 class User(UserOut):
 
     api_base: str = ''
     headers: str = ''
-    
+
     @classmethod
     async def all(cls, api_base: str, headers: dict):
         async with NotifyingHttpClient() as client:
@@ -42,7 +43,7 @@ class User(UserOut):
                 return users
             else:
                 return []
-    
+
     @classmethod
     async def new(cls, api_base: str, headers: dict, **kw):
         async with NotifyingHttpClient() as client:
@@ -73,7 +74,7 @@ class Me(UserOut):
 
     api_base: str = ''
     headers: str = ''
-    
+
     @classmethod
     async def get(cls, api_base: str, token: str):
         async with NotifyingHttpClient() as client:
@@ -85,7 +86,7 @@ class Me(UserOut):
                 return user
             else:
                 return None
-    
+
     @property
     def headers(self):
         return {"Authorization": f"Bearer {self.token}"}
@@ -98,7 +99,6 @@ class Me(UserOut):
                 headers=self.headers
             )
             setattr(self, key, value)
-
 
 
 async def authenticate(username: str, password: str):
@@ -126,7 +126,7 @@ def uilogin(base_url):
             ui.navigate.to('/')
         else:
             ui.notify('Wrong username or password', color='negative')
-    
+
     app.storage.user.clear()
     app.storage.user['base_url'] = base_url
     with ui.card().classes('absolute-center'):
@@ -144,9 +144,7 @@ def require_auth(redirect_to='/login'):
                 if not app.storage.user.get('authenticated', False):
                     ui.notify("⛔ Accès refusé, redirection...")
                     ui.navigate.to(redirect_to)
-                    return    
-                base_url = app.storage.user.get('base_url', '')
-                token = app.storage.user.get('token', '')
+                    return
                 me = await Me.get(app.storage.user['base_url']+"/api", app.storage.user['token'])
                 current_user.set(me)
                 return await page_func(*args, **kwargs)
@@ -185,8 +183,9 @@ def require_admin(redirect_to='/login'):
         return wrapper
     return decorator
 
+
 class UserLine(ui.expansion):
-    
+
     @classmethod
     def get_icon(cls, user: User):
         if user.disabled:
@@ -196,7 +195,7 @@ class UserLine(ui.expansion):
         return "person"
 
     def __init__(self, user: User, api_base: str, headers: dict, current_user: Me):
-        super().__init__(user.username, icon= UserLine.get_icon(user) )
+        super().__init__(user.username, icon=UserLine.get_icon(user))
         self.user = user
         self.api_base = api_base
         self.headers = headers
@@ -212,7 +211,7 @@ class UserLine(ui.expansion):
                 if current_user.id == user.id:
                     elt.props('disable')
                 ui.label('Actif').classes('flex items-center')
-                elt = ui.checkbox(value= not self.user.disabled).props('color=black').on('change', lambda e: self.user.update('disabled', not e.sender.value))
+                elt = ui.checkbox(value=not self.user.disabled).props('color=black').on('change', lambda e: self.user.update('disabled', not e.sender.value))
                 if current_user.id == user.id:
                     elt.props('disable')
                 ui.label('Token').classes('flex items-center')
@@ -241,7 +240,7 @@ class UserList(Element):
 
     async def load_data(self):
         with self:
-            users =  await User.all(self.api_base, self.headers)
+            users = await User.all(self.api_base, self.headers)
             for user in users:
                 UserLine(user, self.api_base, self.headers, self.current_user)
 
@@ -289,12 +288,12 @@ class CreateUser(ui.dialog):
                 ui.label('Mot de passe').classes('flex items-center')
                 self._values['password'] = ui.input(password=True).props('dense')
                 ui.label('Admin').classes('flex items-center')
-                self._values['isadmin'] = ui.checkbox(value= False).props('color=black')
+                self._values['isadmin'] = ui.checkbox(value=False).props('color=black')
                 ui.label('Seulement API').classes('flex items-center')
-                self._values['onlyapi'] = ui.checkbox(value= False).props('color=black')
+                self._values['onlyapi'] = ui.checkbox(value=False).props('color=black')
                 ui.button('Annuler', icon='cancel', color='negative').on('click', lambda: self.close())
                 self.button_change = ui.button('Créer', icon='add', color='positive').on('click', lambda: self.create())
-    
+
     async def create(self):
         await self._src.add_user(**{elt: self._values[elt].value for elt in self._values})
         self.close()

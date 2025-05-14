@@ -3,11 +3,12 @@ from pydantic import parse_obj_as
 import httpx
 from .deps import NotifyingHttpClient
 
+
 class Todo(TodoOut):
 
     api_base: str = ''
     headers: str = ''
-    
+
     @classmethod
     async def all(cls, api_base: str, headers: dict):
         async with NotifyingHttpClient() as client:
@@ -20,7 +21,7 @@ class Todo(TodoOut):
                 return todos
             else:
                 return []
-    
+
     @classmethod
     async def new(cls, text: str, api_base: str, headers: dict):
         async with NotifyingHttpClient() as client:
