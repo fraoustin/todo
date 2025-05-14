@@ -9,3 +9,4 @@ __pycache__
 *.swp
 # ignore nicegui cache
 .nicegui
+*.db

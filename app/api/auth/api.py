@@ -39,12 +39,16 @@ async def me(user: Annotated[dict, Depends(get_current_user)]):
     return user
 
 @router.put("/me", response_model=UserOut)
-async def update_current_user(user: Annotated[dict, Depends(get_current_user)], user_update: UserUpdateMe, db: Session = Depends(get_db)):    
+async def update_current_user(user: Annotated[dict, Depends(get_current_user)], user_update: UserUpdateMe, db: Session = Depends(get_db)):
+    filter_key = ['isadmin',]
+    if len(db.query(User).filter(User.disabled == False).all()) == 1:
+        filter_key.append('disabled')
     for attr, value in user_update.model_dump(exclude_unset=True).items():
-        if attr == 'password':
-            setattr(user, attr, hash_password(attr))
-        else:
-            setattr(user, attr, value)
+        if attr not in filter_key:
+            if attr == 'password':
+                setattr(user, attr, hash_password(attr))
+            else:
+                setattr(user, attr, value)
 
     db.commit()
     db.refresh(user)
@@ -92,7 +96,10 @@ async def update_user(user: Annotated[dict, Depends(get_current_admin_user)], us
         if attr == 'password':
             setattr(user_to_update, attr, hash_password(attr))
         else:
-            setattr(user_to_update, attr, value)
+            if attr == 'isadmin' and user_to_update.id == user.id:
+                pass
+            else:
+                setattr(user_to_update, attr, value)
 
     db.commit()
     db.refresh(user_to_update)

@@ -82,7 +82,6 @@ class Me(UserOut):
                 user = parse_obj_as(cls, response.json())
                 user.api_base = api_base
                 user.headers = {"Authorization": f"Bearer {token}"}
-                print(user)
                 return user
             else:
                 return None

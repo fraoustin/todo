@@ -92,6 +92,15 @@ class TestAuth(unittest.TestCase):
         response = self.client.get("/api/me", headers=headers)
         self.assertEqual(response.status_code, 200)
         self.assertIn("testchange@example.com", response.json()["email"])
+        response = self.client.put("/api/me", headers=headers, content='{"isadmin": true}')
+        self.assertEqual(response.status_code, 200)
+        response = self.client.get("/api/me", headers=headers)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(True, response.json()["isadmin"])
+        response = self.client.put("/api/me", headers=headers, content='{"isadmin": false}')
+        self.assertEqual(response.status_code, 200)
+        response = self.client.get("/api/me", headers=headers)
+        self.assertEqual(response.status_code, 200)
 
     def test_users(self):
         token_response = self.client.post("/api/token", data={"username": "admin", "password": "secret"})
