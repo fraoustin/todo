@@ -8,6 +8,7 @@ sample of todo application with fastapi and nicegui
 
 ## run
 
+> mkdir data
 > python app/main.py
 
 ## quality
